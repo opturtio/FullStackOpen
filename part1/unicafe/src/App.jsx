@@ -6,7 +6,7 @@ const Button = ({ label, handleClick }) => (
   <button onClick={handleClick}>{label}</button>
 )
 
-const ShowResult = ({ category, value }) => (
+const Statistics = ({ category, value }) => (
   <p>{category} {value}</p>
 )
 
@@ -17,7 +17,6 @@ const App = () => {
   const total = good + neutral + bad
   const average = total > 0 ? ((good - bad) / total) : 0
   const positive = total > 0 ? ((good / total) * 100) : 0
-
 
   const increaseGood = () => {
     setGood(good + 1)
@@ -38,13 +37,12 @@ const App = () => {
       <Button label="Neutral" handleClick={increaseNeutral} />
       <Button label="Bad" handleClick={increaseBad} />
       <Header text='Statistics' />
-      <ShowResult category='Good' value={good} />
-      <ShowResult category='Neutral' value={neutral} />
-      <ShowResult category='Bad' value={bad} />
-      <ShowResult category="All" value={total} />
-      <ShowResult category="Average" value={average} />
-      <ShowResult category="Positive" value={`${positive}%`} />
-      
+      <Statistics category='Good' value={good} />
+      <Statistics category='Neutral' value={neutral} />
+      <Statistics category='Bad' value={bad} />
+      <Statistics category="All" value={total} />
+      <Statistics category="Average" value={average} />
+      <Statistics category="Positive" value={`${positive}%`} />
     </div>
   )
 }
