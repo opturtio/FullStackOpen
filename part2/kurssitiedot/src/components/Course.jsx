@@ -29,7 +29,7 @@ const Course = ({ course }) => {
     console.log(parts)
     return (
       <div>
-        {parts.map(part => <Part key={part.id} name={part.name} exercises={parts.exercises} />)}
+        {parts.map(part => <Part key={part.id} name={part.name} exercises={part.exercises} />)}
       </div>
     )
   }
