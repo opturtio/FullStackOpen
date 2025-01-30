@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react'
-import axios from 'axios'
 import Filter from './components/Filter'
 import PersonForm from './components/PersonForm'
 import Persons from './components/Persons'
+import personsService from './services/persons'
 
 const App = () => {
   const [persons, setPersons] = useState([])
@@ -11,18 +11,17 @@ const App = () => {
   const [newNumber, setNewNumber] = useState('')
   const [personsToShow, setPersonsToShow] = useState([])
 
-  const hook = () => {
-    console.log('effect')
-    axios
-      .get('http://localhost:3001/persons')
-      .then(response => {
-        console.log('promise fulfilled')
-        setPersons(response.data)
-        setPersonsToShow(response.data)
+  const initializePersons = () => {
+    personsService
+      .initPersons()
+      .then(initialPersons => {
+        console.log(initialPersons)
+        setPersons(initialPersons)
+        setPersonsToShow(initialPersons)
       })
   }
-  
-  useEffect(hook, [])
+
+  useEffect(initializePersons, [])
 
   const changeChar = (event) => {
     setNewChar(event.target.value)
@@ -36,7 +35,7 @@ const App = () => {
   const changeName = (event) => {
     setNewName(event.target.value)
   }
-  
+
   const changeNumber = (event) => {
     setNewNumber(event.target.value)
   }
@@ -48,10 +47,10 @@ const App = () => {
     } else {
       const newPerson = { name: newName, number: newNumber }
 
-      axios
-        .post('http://localhost:3001/persons', newPerson)
-        .then(response => {
-          const updatedPersons = persons.concat(response.data)
+      personsService
+        .add(newPerson)
+        .then(returnedPersons => {
+          const updatedPersons = persons.concat(returnedPersons)
           setPersons(updatedPersons)
           setPersonsToShow(updatedPersons)
         })
