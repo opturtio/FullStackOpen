@@ -59,6 +59,16 @@ const App = () => {
     setNewNumber('')
   }
 
+  const deletePerson = (id) => {
+    personsService
+      .deletePerson(id)
+      .then(() => {
+        const updatedPersons = persons.filter(person => person.id !== id)
+        setPersons(updatedPersons)
+        setPersonsToShow(updatedPersons)
+      })
+  }
+
   return (
     <div>
       <h2>Phonebook</h2>
@@ -77,7 +87,7 @@ const App = () => {
       />
 
       <h2>Numbers</h2>
-      <Persons personsToShow={personsToShow} />
+      <Persons personsToShow={personsToShow} deletePerson={deletePerson}/>
     </div>
   )
 }

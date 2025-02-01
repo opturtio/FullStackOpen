@@ -15,4 +15,8 @@ const add = (newPerson) => {
     })
 }
 
-export default { initPersons, add }
+const deletePerson = (id) => {
+    return axios.delete(`${baseUrl}/${id}`).then(() => id)
+}
+
+export default { initPersons, add, deletePerson }
