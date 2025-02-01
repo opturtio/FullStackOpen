@@ -8,6 +8,7 @@ import personsService from './services/persons'
 const App = () => {
   const [persons, setPersons] = useState([])
   const [message, setMessage] = useState('')
+  const [color, setColor] = useState('green')
   const [newChar, setNewChar] = useState('')
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
@@ -41,17 +42,20 @@ const App = () => {
     setNewNumber(event.target.value)
   }
 
-  const showMessage = (message) => {
+  const showMessage = (message, timeout = 3000, color = 'green') => {
     setMessage(message)
+    setColor(color)
+
     setTimeout(() => {
       setMessage(null)
-    }, 5000)
+    }, timeout)
   }
 
   const addPerson = (event) => {
     event.preventDefault()
     const newPerson = { name: newName, number: newNumber }
     const existingPerson = persons.find((person) => person.name === newName)
+
     if (existingPerson) {
       if (window.confirm(`${newName} is already added to phonebook, replace the old number with a new one?`)) {
         personsService
@@ -63,9 +67,12 @@ const App = () => {
             setPersonsToShow(personsToShow.map(person => 
                 person.id !== existingPerson.id ? person : updatedPerson
             ))
-            showMessage(`New number ${existingPerson.number} added to ${existingPerson.name}`)
+            showMessage(`New number ${existingPerson.number} added to ${existingPerson.name}`, 3000, 'green')
           })
-        }
+          .catch(error => {
+            showMessage('Failed to update the person. They may have been removed from the server', 4000, 'red')
+          })
+      }
     } else {
       personsService
         .add(newPerson)
@@ -73,7 +80,10 @@ const App = () => {
           const updatedPersons = persons.concat(returnedPersons)
           setPersons(updatedPersons)
           setPersonsToShow(updatedPersons)
-          showMessage(`New person ${newPerson.name} added`)
+          showMessage(`New person ${newPerson.name} added`, 3000, 'green')
+        })
+        .catch(error => {
+          showMessage('Failed to add the person', 4000, 'red')
         })
     }
     setNewName('')
@@ -87,7 +97,12 @@ const App = () => {
         const updatedPersons = persons.filter(person => person.id !== id)
         setPersons(updatedPersons)
         setPersonsToShow(updatedPersons)
-        showMessage(`Person deleted!`)
+        showMessage('Person deleted!', 3000, 'green')
+      })
+      .catch(error => {
+        showMessage('Information has already been removed from the server!', 4000, 'red')
+        setPersons(persons.filter(person => person.id !== id))
+        setPersonsToShow(personsToShow.filter(person => person.id !== id))
       })
   }
 
@@ -96,6 +111,7 @@ const App = () => {
       <h2>Phonebook</h2>
       <Notifications
         message={message}
+        color={color}
       />
 
       <Filter 
