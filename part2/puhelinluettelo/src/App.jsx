@@ -2,10 +2,12 @@ import { useState, useEffect } from 'react'
 import Filter from './components/Filter'
 import PersonForm from './components/PersonForm'
 import Persons from './components/Persons'
+import Notifications from './components/Notifications'
 import personsService from './services/persons'
 
 const App = () => {
   const [persons, setPersons] = useState([])
+  const [message, setMessage] = useState('')
   const [newChar, setNewChar] = useState('')
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
@@ -15,7 +17,6 @@ const App = () => {
     personsService
       .initPersons()
       .then(initialPersons => {
-        console.log(initialPersons)
         setPersons(initialPersons)
         setPersonsToShow(initialPersons)
       })
@@ -40,6 +41,13 @@ const App = () => {
     setNewNumber(event.target.value)
   }
 
+  const showMessage = (message) => {
+    setMessage(message)
+    setTimeout(() => {
+      setMessage(null)
+    }, 5000)
+  }
+
   const addPerson = (event) => {
     event.preventDefault()
     const newPerson = { name: newName, number: newNumber }
@@ -55,6 +63,7 @@ const App = () => {
             setPersonsToShow(personsToShow.map(person => 
                 person.id !== existingPerson.id ? person : updatedPerson
             ))
+            showMessage(`New number ${existingPerson.number} added to ${existingPerson.name}`)
           })
         }
     } else {
@@ -64,6 +73,7 @@ const App = () => {
           const updatedPersons = persons.concat(returnedPersons)
           setPersons(updatedPersons)
           setPersonsToShow(updatedPersons)
+          showMessage(`New person ${newPerson.name} added`)
         })
     }
     setNewName('')
@@ -77,12 +87,17 @@ const App = () => {
         const updatedPersons = persons.filter(person => person.id !== id)
         setPersons(updatedPersons)
         setPersonsToShow(updatedPersons)
+        showMessage(`Person deleted!`)
       })
   }
 
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notifications
+        message={message}
+      />
+
       <Filter 
         newChar={newChar} 
         changeChar={changeChar} 
