@@ -1,17 +1,25 @@
 import CountryInfo from "./CountryInfo"
+import { useState } from "react"
 
 const Filter = ({ newChar, countries }) => {
-  const filteredCountries = countries.filter(country => country.name.common.toLowerCase().startsWith(newChar.toLowerCase()))
+  const [selectedCountry, setSelectedCountry] = useState(null);
+
+  const filteredCountries = countries.filter(country =>
+    country.name.common.toLowerCase().startsWith(newChar.toLowerCase())
+  )
+
   if (filteredCountries.length > 10) {
-    return <div><p>Too many matches, specify another filter</p></div>
+    return <p>Too many matches, specify another filter</p>
   } else if (filteredCountries.length > 1) {
     return (
       <div>
-        {filteredCountries.map(country =>
-          <p key={country.cca2}>
-            {country.name.common}
-          </p>
-          )}
+        {filteredCountries.map(country => (
+          <div key={country.cca2}>
+            <p>{country.name.common}</p>
+            <button onClick={() => setSelectedCountry(country)}>Show</button>
+          </div>
+          ))}
+        {selectedCountry && <CountryInfo country={selectedCountry} />}
       </div>
     )
   } else if (filteredCountries.length === 1) {
