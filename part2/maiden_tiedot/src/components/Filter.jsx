@@ -1,9 +1,7 @@
 import CountryInfo from "./CountryInfo"
 import { useState } from "react"
 
-const Filter = ({ newChar, countries }) => {
-  const [selectedCountry, setSelectedCountry] = useState(null);
-
+const Filter = ({ newChar, countries, selectedCountry, setSelectedCountry }) => {
   const filteredCountries = countries.filter(country =>
     country.name.common.toLowerCase().startsWith(newChar.toLowerCase())
   )
@@ -23,6 +21,7 @@ const Filter = ({ newChar, countries }) => {
       </div>
     )
   } else if (filteredCountries.length === 1) {
+    setSelectedCountry(filteredCountries[0])
     return <CountryInfo country={filteredCountries[0]}/>
   } else {
     return <p>No countries found</p>

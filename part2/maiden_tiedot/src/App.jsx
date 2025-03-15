@@ -2,20 +2,27 @@ import { useState, useEffect } from 'react'
 import './App.css'
 import Search from './components/Search'
 import Filter from './components/Filter'
-import countriesService from './services/countries'
+import Weather from './components/Weather'
+import fetchCountries from './services/countries'
+import fetchWeather from './services/weather'
 
 function App() {
   const [newChar, setNewChar] = useState('')
   const [countryData, setCountryData] = useState([])
+  const [selectedCountry, setSelectedCountry] = useState(null)
+  const [weatherData, setWeatherData] = useState([])
   
   useEffect(() => {
-    countriesService
-      .fetchCountries()
-      .then(initialCountries => {
-        console.log(initialCountries)
-        setCountryData(initialCountries)
-      })
+    fetchCountries()
+      .then(initialCountries => setCountryData(initialCountries))
   }, [])
+
+  useEffect(() => {
+    if (selectedCountry) {
+      fetchWeather(selectedCountry.capital)
+      .then(initialWeather => setWeatherData(initialWeather))
+    }
+  }, [selectedCountry])
 
   const changeChar = (event) => {
     setNewChar(event.target.value)
@@ -32,7 +39,16 @@ function App() {
       <Filter
         countries={countryData}
         newChar={newChar}
+        selectedCountry={selectedCountry}
+        setSelectedCountry={setSelectedCountry}
       />
+      <Weather weatherData={weatherData} />
+
+      <br></br>
+      <p>Powered by:</p>
+      <a href="https://www.weatherapi.com/" title="Free Weather API" target="_blank">
+        <img src="https://cdn.weatherapi.com/v4/images/weatherapi_logo.png" alt="Weather data by WeatherAPI.com" border="0"/>
+      </a>
     </div>
   )
 }
