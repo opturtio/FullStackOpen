@@ -2,6 +2,7 @@ const express = require('express')
 const cors = require('cors')
 const morgan = require('morgan')
 const app = express()
+const path = require('path')
 
 app.use(express.json())
 app.use(cors())
@@ -97,6 +98,10 @@ app.get('/info', (request, response) => {
     `<p>Phonebook has info for ${ppl} people</p>
     <p>${date}</p>`
   )
+})
+
+app.get('*', (req, res) => {
+  res.sendFile(path.resolve(__dirname, 'dist', 'index.html'))
 })
 
 const PORT = process.env.PORT || 3001
