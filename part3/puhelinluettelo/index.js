@@ -13,7 +13,7 @@ morgan.token('body', (req) => {
 })
 
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms :body'))
-app.use(express.static(path.join(__dirname, 'frontend')));
+app.use(express.static(path.join(__dirname, 'frontend', 'build')))
 
 const date = new Date()
 
@@ -98,7 +98,7 @@ app.get('/info', (request, response) => {
 })
 
 app.get('*', (req, res) => {
-  res.sendFile(path.resolve(__dirname, 'build', 'index.html'))
+  res.sendFile(path.resolve(__dirname, 'frontend', 'build', 'index.html'))
 })
 
 const PORT = process.env.PORT || 3001;
