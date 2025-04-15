@@ -1,6 +1,8 @@
 const express = require('express')
 const cors = require('cors')
 const morgan = require('morgan')
+const path = require('path');
+
 const app = express()
 
 app.use(express.json())
@@ -11,6 +13,7 @@ morgan.token('body', (req) => {
 })
 
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms :body'))
+app.use(express.static(path.join(__dirname, 'frontend')));
 
 const date = new Date()
 
@@ -39,11 +42,7 @@ let persons =
 ]
 
 app.get('/api/persons', (request, response) => {
-  if (persons) {
-    response.json(persons)
-  } else {
-    response.status(404).end()
-  }
+  response.json(persons)
 })
 
 app.get('/api/persons/:id', (request, response) => {
@@ -98,7 +97,11 @@ app.get('/info', (request, response) => {
   )
 })
 
-const PORT = 3001
+app.get('*', (req, res) => {
+  res.sendFile(path.resolve(__dirname, 'build', 'index.html'))
+})
+
+const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`)
 })
