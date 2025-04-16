@@ -62,7 +62,7 @@ app.post('/api/persons/', (request, response) => {
   const body = request.body
   console.log(body.name)
 
-  if (!body.content) {
+  if (!body.name || !body.number) {
     return response.status(400).json({
       error: 'name or number missing'
     })
@@ -72,6 +72,7 @@ app.post('/api/persons/', (request, response) => {
     name: body.name,
     number: body.number,
   })
+  console.log(person.name)
 
   person.save()
     .then(p => { response.json(p) })
