@@ -62,7 +62,7 @@ app.post('/api/persons/', (request, response) => {
   const body = request.body
   console.log(body.name)
 
-  if (!body.name || !body.number) {
+  if (!body.content) {
     return response.status(400).json({
       error: 'name or number missing'
     })
@@ -74,15 +74,12 @@ app.post('/api/persons/', (request, response) => {
     })
   }
 
-  const person = {
-    id: `${Math.floor(Math.random() * 10**12)}`,
+  const person = new Person({
     name: body.name,
     number: body.number,
-  }
+  })
 
-  persons = persons.concat(person)
-
-  response.json(person)
+  person.save().then(p => { response.json(p) })
 })
 
 app.delete('/api/persons/:id', (request, response) => {
