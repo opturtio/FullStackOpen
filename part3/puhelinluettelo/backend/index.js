@@ -68,18 +68,14 @@ app.post('/api/persons/', (request, response) => {
     })
   }
 
-  if (persons.some(p => p.name === body.name)) {
-    return response.status(400).json({
-      error: 'name must be unique'
-    })
-  }
-
   const person = new Person({
     name: body.name,
     number: body.number,
   })
 
-  person.save().then(p => { response.json(p) })
+  person.save()
+    .then(p => { response.json(p) })
+    .catch((error) => { console.log('error saving to MongoDB:', error.message) })
 })
 
 app.delete('/api/persons/:id', (request, response) => {
