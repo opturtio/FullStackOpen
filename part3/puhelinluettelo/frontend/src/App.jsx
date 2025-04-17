@@ -3,7 +3,8 @@ import Filter from './components/Filter'
 import PersonForm from './components/PersonForm'
 import Persons from './components/Persons'
 import Notifications from './components/Notifications'
-import personsService from './services/persons'
+import personsService from './services/persons-service'
+// import Person from '../../backend/models/person'
 
 const App = () => {
   const [persons, setPersons] = useState([])
@@ -21,6 +22,7 @@ const App = () => {
         setPersons(initialPersons)
         setPersonsToShow(initialPersons)
       })
+      .catch(error => console.log(error.response.data))
   }
 
   useEffect(initializePersons, [])
@@ -54,7 +56,9 @@ const App = () => {
   const addPerson = (event) => {
     event.preventDefault()
     const newPerson = { name: newName, number: newNumber }
+    console.log('newPerson:', newPerson)
     const existingPerson = persons.find((person) => person.name === newName)
+    console.log('existingPerson:', existingPerson)
 
     if (existingPerson) {
       if (window.confirm(`${newName} is already added to phonebook, replace the old number with a new one?`)) {
@@ -67,7 +71,8 @@ const App = () => {
             setPersonsToShow(personsToShow.map(person => 
                 person.id !== existingPerson.id ? person : updatedPerson
             ))
-            showMessage(`New number ${existingPerson.number} added to ${existingPerson.name}`, 3000, 'green')
+            console.log("HEY NYT:",newPerson.number)
+            showMessage(`New number ${newPerson.number} added to ${existingPerson.name}`, 3000, 'green')
           })
           .catch(error => {
             showMessage('Failed to update the person. They may have been removed from the server', 4000, 'red')
@@ -83,7 +88,11 @@ const App = () => {
           showMessage(`New person ${newPerson.name} added`, 3000, 'green')
         })
         .catch(error => {
-          showMessage('Failed to add the person', 4000, 'red')
+          if (error.response && error.response.data && error.response.data.error) {
+            showMessage(error.response.data.error, 4000, 'red')  // ✅ shows Mongoose error
+          } else {
+            showMessage('Failed to add the person', 4000, 'red')
+          }
         })
     }
     setNewName('')

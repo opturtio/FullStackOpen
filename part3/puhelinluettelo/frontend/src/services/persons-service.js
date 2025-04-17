@@ -10,6 +10,7 @@ const initPersons = () => {
 
 const add = (newPerson) => {
     const request = axios.post(baseUrl, newPerson)
+    console.log('In Frontend, persons.js, Sending person', newPerson)
     return request.then(response => {
         return response.data
     })
@@ -17,7 +18,9 @@ const add = (newPerson) => {
 
 const update = (id, updatedPerson) => {
     const request = axios.put(`${baseUrl}/${id}`, updatedPerson)
+    console.log('updatedPerson:', updatedPerson)
     return request.then(response => {
+        console.log(response)
         return response.data
     })
 }
