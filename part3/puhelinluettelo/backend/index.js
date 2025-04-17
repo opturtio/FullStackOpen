@@ -15,36 +15,12 @@ morgan.token('body', (req) => {
 
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms :body'))
 
-const date = new Date()
-
-let persons =
-[
-  {
-    id: "1",
-    name: "Arto Hellas",
-    number: "040-123456"
-  },
-  {
-    id: "2",
-    name: "Ada Lovelace",
-    number: "39-44-543543"
-  },
-  {
-    id: "3",
-    name: "Dan Abramov",
-    number: "12-34-234234"
-  },
-  {
-    id: "4",
-    name: "Mary Poppendieck",
-    number: "39-23-6433122"
-  }
-]
-
 app.get('/api/persons', (request, response) => {
-  Person.find({}).then(ppl => {
-        response.json(ppl)
+  Person.find({})
+    .then(ppl => {
+      response.json(ppl)
     })
+    .catch(error => next(error))
 })
 
 app.get('/api/persons/:id', (request, response, next) => {
@@ -58,7 +34,7 @@ app.get('/api/persons/:id', (request, response, next) => {
   .catch(error => next(error))
 })
 
-app.post('/api/persons/', (request, response) => {
+app.post('/api/persons/', (request, response, next) => {
   const body = request.body
   console.log(body.name)
 
@@ -76,10 +52,10 @@ app.post('/api/persons/', (request, response) => {
 
   person.save()
     .then(p => { response.json(p) })
-    .catch((error) => { console.log('error saving to MongoDB:', error.message) })
+    .catch(error => next(error))
 })
 
-app.put('/api/persons/:id', (request, response) => {
+app.put('/api/persons/:id', (request, response, next) => {
   Person.findByIdAndUpdate(request.params.id, request.body)
     .then(person => {
       if (!person) {
@@ -94,7 +70,7 @@ app.put('/api/persons/:id', (request, response) => {
     .catch(error => next(error))
 })
 
-app.delete('/api/persons/:id', (request, response) => {
+app.delete('/api/persons/:id', (request, response, next) => {
   Person.findByIdAndDelete(request.params.id)
     .then(result => {
       response.status(204).end()
@@ -102,13 +78,36 @@ app.delete('/api/persons/:id', (request, response) => {
     .catch(error => next(error))
 })
 
-app.get('/info', (request, response) => {
-  const ppl = Object.keys(persons).length
-  response.send(
-    `<p>Phonebook has info for ${ppl} people</p>
-    <p>${date}</p>`
-  )
+app.get('/info', (request, response, next) => {
+  const date = new Date()
+  
+  Person.countDocuments({})
+    .then(count => {
+      response.send(
+        `<p>Phonebook has info for ${count} people</p>
+        <p>${date}</p>`
+      )
+    })
+    .catch(error => next(error))
 })
+
+const unknownEndpoint = (request, response) => {
+  response.status(404).send({ error: 'unknown endpoint' })
+}
+app.use(unknownEndpoint)
+
+const errorHandler = (error, request, response, next) => {
+  console.error('Error:', error.message)
+
+  if (error.name === 'CastError') {
+    return response.status(400).send({ error: 'malformatted id' })
+  } else if (error.name === 'ValidationError') {
+    return response.status(400).json({ error: error.message })
+  }
+
+  next(error)
+}
+app.use(errorHandler)
 
 const PORT = process.env.PORT
 app.listen(PORT, () => {
