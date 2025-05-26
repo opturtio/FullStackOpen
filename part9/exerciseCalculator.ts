@@ -42,6 +42,30 @@ const calculateExercises = (exerciseHours: number[], target: number): Info => {
     }
 }
 
+interface Values {
+    exerciseHours: number[];
+    target: number;
+}
+
+const parseArguments = (args: string[]): Values => {
+  if (args.length < 4) throw new Error('Not enough arguments');
+  
+  const exerciseHours = args.slice(3,args.length).map(Number);
+  const target = Number(args.slice(2,3));
+
+  return {
+    exerciseHours: exerciseHours,
+    target: target
+  }
+}
+
 try {
-  const { }
+    const { exerciseHours , target } = parseArguments(process.argv);
+    console.log(calculateExercises(exerciseHours, target));
+} catch (error: unknown) {
+    let errorMessage = 'Something went wrong.';
+    if (error instanceof Error) {
+        errorMessage += ' Error: ' + error.message;
+    }
+    console.log(errorMessage);
 }
