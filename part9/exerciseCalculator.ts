@@ -1,11 +1,11 @@
 interface Info { 
-  periodLength: number,
-  trainingDays: number,
-  success: boolean,
-  rating: number,
-  ratingDescription: string,
-  target: number,
-  average: number
+  periodLength: number;
+  trainingDays: number;
+  success: boolean;
+  rating: number;
+  ratingDescription: string;
+  target: number;
+  average: number;
 }
 
 const sum = (numbers: number[]): number => numbers.reduce((acc, num) => acc + num, 0);
@@ -42,4 +42,6 @@ const calculateExercises = (exerciseHours: number[], target: number): Info => {
     }
 }
 
-console.log(calculateExercises([3, 0, 2, 4.5, 0, 3, 1], 2));
+try {
+  const { }
+}
