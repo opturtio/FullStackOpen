@@ -21,12 +21,12 @@ const createRateDesc = (rating: number): string => {
     default:
       throw new Error('Something went wrong');
   }
-}
+};
 
-const calculateExercises = (exerciseHours: number[], target: number): Info => {
+export const calculateExercises = (exerciseHours: number[], target: number): Info => {
   const periodLength = exerciseHours.length;
   const trainingDays = exerciseHours.filter(d => d != 0).length;
-  const average = sum(exerciseHours)/periodLength
+  const average = sum(exerciseHours)/periodLength;
   const success = average > target ? true : false;
   const rating = average >= 2.5 ? 3 : average >= 1.6 ? 2 : 1;
   const ratingDescription = createRateDesc(rating);
@@ -39,8 +39,8 @@ const calculateExercises = (exerciseHours: number[], target: number): Info => {
     ratingDescription: ratingDescription,
     target: target,
     average: average
-    }
-}
+    };
+};
 
 interface Values {
     exerciseHours: number[];
@@ -56,16 +56,18 @@ const parseArguments = (args: string[]): Values => {
   return {
     exerciseHours: exerciseHours,
     target: target
-  }
-}
+  };
+};
 
-try {
-    const { exerciseHours , target } = parseArguments(process.argv);
-    console.log(calculateExercises(exerciseHours, target));
-} catch (error: unknown) {
-    let errorMessage = 'Something went wrong.';
-    if (error instanceof Error) {
-        errorMessage += ' Error: ' + error.message;
-    }
-    console.log(errorMessage);
+if (require.main === module) {
+  try {
+      const { exerciseHours , target } = parseArguments(process.argv);
+      console.log(calculateExercises(exerciseHours, target));
+  } catch (error: unknown) {
+      let errorMessage = 'Something went wrong.';
+      if (error instanceof Error) {
+          errorMessage += ' Error: ' + error.message;
+      }
+      console.log(errorMessage);
+  }
 }
