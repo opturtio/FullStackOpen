@@ -1,3 +1,4 @@
+const _ = require('lodash')
 const dummy = (blogs) => {
   return 1
 }
@@ -16,7 +17,17 @@ const favoriteBlog = (blogs) => {
 }
 
 const mostBlogs = (blogs) => {
-  
+  if (!blogs || blogs.length === 0) return null
+
+  const authors = blogs.reduce((occ, { author }) => {
+    occ[author] = (occ[author] || 0) + 1
+    return occ
+  }, {})
+
+  const [author, blogCount] = Object.entries(authors)
+    .reduce((max, entry) => entry[1] > max[1] ? entry : max)
+
+  return { author: author, blogs: blogCount }
 }
 
 module.exports = {
